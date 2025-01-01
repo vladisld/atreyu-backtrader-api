@@ -185,21 +185,21 @@ class IBOrder(OrderBase, ibapi.order.Order):
             tif = 'GTC'  # Good til cancelled
         elif isinstance(self.valid, (datetime, date)):
             tif = 'GTD'  # Good til date
-            self.goodTillDate = bytes(self.valid.strftime('%Y%m%d %H:%M:%S'))
+            self.goodTillDate = bytes(self.valid.strftime('%Y%m%d-%H:%M:%S'))
         elif isinstance(self.valid, (timedelta,)):
             if self.valid == self.DAY:
                 tif = 'DAY'
             else:
                 tif = 'GTD'  # Good til date
-                valid = datetime.now() + self.valid  # .now, using localtime
-                self.goodTillDate = bytes(valid.strftime('%Y%m%d %H:%M:%S'))
+                valid = datetime.utcnow() + self.valid  # .now, using localtime
+                self.goodTillDate = bytes(valid.strftime('%Y%m%d-%H:%M:%S'))
 
         elif self.valid == 0:
             tif = 'DAY'
         else:
             tif = 'GTD'  # Good til date
             valid = num2date(self.valid)
-            self.goodTillDate = bytes(valid.strftime('%Y%m%d %H:%M:%S'))
+            self.goodTillDate = bytes(valid.strftime('%Y%m%d-%H:%M:%S'))
 
         self.tif = bytes(tif)
 
